@@ -1,0 +1,8 @@
+name: CXR
+data_dim: 128
+data_ch: 1
+n_classes: 2
+n_clients: 10
+class_distribution: iid
+n_generated_per_class: 10
+use_val_data: True

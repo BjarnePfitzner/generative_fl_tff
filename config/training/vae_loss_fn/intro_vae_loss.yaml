@@ -1,0 +1,5 @@
+name: intro_vae_loss
+intro_alpha: 0.25
+intro_alpha_warmup: 2
+intro_beta: 0.5
+intro_m: 110

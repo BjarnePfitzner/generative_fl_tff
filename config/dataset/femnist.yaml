@@ -1,0 +1,8 @@
+name: FEMNIST
+data_dim: 28
+data_ch: 1
+n_classes: 62
+n_clients: 3400
+class_distribution: iid
+n_generated_per_class: 2
+use_val_data: True

@@ -1,0 +1,6 @@
+name: vae
+type: sync_ed
+latent_dim: 2
+normalisation_mean_zero: False
+module: soft_intro_res_vae
+output_activation_fn: sigmoid

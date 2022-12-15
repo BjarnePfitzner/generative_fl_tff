@@ -1,0 +1,6 @@
+fid:
+  key: fid/fid
+  mode: min
+  min_delta: 0.01
+  patience: 50
+  initial_delay: 30

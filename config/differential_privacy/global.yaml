@@ -1,0 +1,7 @@
+type: global
+l2_norm_clip: 1.2
+noise_multiplier: 0.7
+delta: 1e-5
+epsilon: 10
+adaptive: False
+auto_detect: False

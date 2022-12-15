@@ -1,0 +1,8 @@
+name: CelebA
+data_dim: 32
+data_ch: 3
+n_classes: 2
+n_clients: 9343
+class_distribution: iid
+n_generated_per_class: 10
+use_val_data: True

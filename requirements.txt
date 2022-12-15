@@ -1,0 +1,12 @@
+tensorflow_federated==0.19.0
+tensorflow==2.5.0
+numpy
+pandas
+matplotlib
+sklearn
+scikit-image
+hydra-core
+hydra-joblib-launcher
+hydra-submitit-launcher
+hydra-optuna-sweeper
+seaborn

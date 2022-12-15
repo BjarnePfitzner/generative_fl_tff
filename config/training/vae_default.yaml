@@ -1,0 +1,26 @@
+defaults:
+  - vae_loss_fn: soft_intro_vae_loss
+  - early_stopping:
+
+total_rounds: 1000
+clients_per_round: 0.01
+local_epochs: 1
+batch_size: 16
+rounds_per_checkpoint: 20
+
+aggregation_step_optimizer:
+  type: SGD
+  lr: 1.0
+  momentum: 0.0
+  nesterov: True
+  beta_1: 0.9
+  beta_2: 0.999
+
+# VAE Training
+client_optimizer:
+  type: Adam
+  lr: 0.0001
+  momentum: 0.0
+  nesterov: True
+  beta_1: 0.9
+  beta_2: 0.999

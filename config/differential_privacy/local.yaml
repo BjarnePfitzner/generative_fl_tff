@@ -1,0 +1,7 @@
+type: local
+l2_norm_clip: 1.0
+noise_multiplier: 0.55
+delta: 1e-5
+epsilon: 10
+adaptive: False
+auto_detect: False

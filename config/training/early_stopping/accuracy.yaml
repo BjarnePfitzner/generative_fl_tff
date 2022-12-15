@@ -1,0 +1,7 @@
+accuracy:
+  key: classification/gen_acc
+  mode: max
+  min_delta: 0.001
+  patience: 50
+  initial_delay: 30
+  baseline:

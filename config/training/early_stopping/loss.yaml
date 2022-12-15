@@ -1,0 +1,6 @@
+loss:
+  key: loss
+  mode: min
+  min_delta: 0.001
+  patience: 50
+  initial_delay: 50

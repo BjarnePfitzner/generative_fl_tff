@@ -1,0 +1,9 @@
+name: CheXpert
+data_dim: 128
+data_ch: 1
+n_classes: 13
+n_clients: 25
+class_distribution: iid
+test_fraction: 0.2
+n_generated_per_class: 5
+use_val_data: True

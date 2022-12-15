@@ -1,0 +1,3 @@
+name: kl_loss
+kl_beta: 0.01
+kl_beta_warmup: 0

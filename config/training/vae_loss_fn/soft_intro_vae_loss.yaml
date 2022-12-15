@@ -1,0 +1,5 @@
+name: soft_intro_vae_loss
+s_intro_beta_rec: 1.0
+s_intro_beta_kl: 1.0
+s_intro_beta_neg: 256.0
+s_intro_gamma_r: 1e-8

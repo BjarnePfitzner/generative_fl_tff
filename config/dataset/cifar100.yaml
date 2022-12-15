@@ -1,0 +1,8 @@
+name: CIFAR100
+data_dim: 32
+data_ch: 3
+n_classes: 100
+n_clients: 500
+class_distribution: iid
+n_generated_per_class: 2
+use_val_data: True

@@ -1,0 +1,11 @@
+# Evaluation
+run_fid_eval: False
+run_cls_eval: True
+cls_eval_trials: 1
+run_cm_eval: False
+
+real_classifier: False
+plot_l2_norms: False
+
+rounds_per_eval: 10
+batch_size: 32
