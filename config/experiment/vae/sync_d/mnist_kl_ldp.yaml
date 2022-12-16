@@ -1,0 +1,88 @@
+# @package _global_
+
+defaults:
+  - override /model: vae
+  - override /dataset: mnist
+  - override /evaluation: development
+  - override /differential_privacy: local
+  - override /training/vae_loss_fn: kl_loss
+  #- override /training/early_stopping:
+  #  - fid
+  #  - accuracy
+
+experiment_name: sync_d_KL_LDP
+
+training:
+  local_epochs: 5
+  batch_size: 20
+  clients_per_round: 0.01
+  client_optimizer:
+    type: Adam
+    lr: 0.01
+  aggregation_step_optimizer:
+    type: SGD
+    lr: 1.0
+    momentum: 0.5
+  total_rounds: 1000
+  vae_loss_fn:
+    kl_beta: 0.01
+    kl_beta_warmup: 0
+
+evaluation:
+  run_fid_eval: True
+  rounds_per_eval: 20
+  plot_l2_norms: True
+
+model:
+  type: sync_d
+  latent_dim: 8
+  module: small_ccvae
+
+differential_privacy:
+  auto_detect: False
+  adaptive: False
+  l2_norm_clip: 0.1
+  noise_multiplier: 1.2
+
+hydra:
+  sweeper:
+    params:
+      differential_privacy.l2_norm_clip:
+        - 0.1
+        - 0.2
+        - 0.3
+        - 0.5
+        - 0.7
+      #  - 1.0
+      #  - 1.5
+      #  - 2.0
+      differential_privacy.noise_multiplier:
+      #  - 0.5
+      #  - 0.6
+      #  - 0.7
+      #  - 1.0
+      #  - 1.2
+        - 1.5
+        - 1.8
+        - 2.0
+        - 2.2
+      training.local_epochs:
+        - 1
+        - 5
+        - 10
+      training.batch_size:
+        - 10
+        - 20
+        - 30
+      training.clients_per_round:
+        - 0.01
+        - 0.05
+        - 0.1
+      training.aggregation_step_optimizer.momentum:
+        - 0.0
+        - 0.5
+        - 0.9
+      training.client_optimizer.lr:
+        - 0.0001
+        - 0.001
+        - 0.01

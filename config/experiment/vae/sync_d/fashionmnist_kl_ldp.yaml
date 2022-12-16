@@ -1,0 +1,68 @@
+# @package _global_
+
+defaults:
+  - override /model: vae
+  - override /dataset: fashion_mnist
+  - override /evaluation: development
+  - override /differential_privacy: local
+  - override /training/vae_loss_fn: kl_loss
+  #- override /training/early_stopping:
+  #  - fid
+  #  - accuracy
+
+experiment_name: FMNIST-sync_d-LDP-Eps1
+
+training:
+  local_epochs: 10
+  batch_size: 30
+  clients_per_round: 0.01
+  client_optimizer:
+    type: Adam
+    lr: 0.0001
+  aggregation_step_optimizer:
+    type: SGD
+    lr: 1.0
+    momentum: 0.0
+  total_rounds: 1000
+  vae_loss_fn:
+    kl_beta: 0.01
+    kl_beta_warmup: 0
+
+evaluation:
+  run_fid_eval: True
+  rounds_per_eval: 50
+  plot_l2_norms: True
+
+model:
+  type: sync_d
+  latent_dim: 8
+  module: dp2_ccvae
+
+differential_privacy:
+  epsilon: 1.0
+  auto_detect: False
+  adaptive: False
+  l2_norm_clip: 2.0
+  noise_multiplier: 1.0
+
+hydra:
+  sweeper:
+    params:
+      differential_privacy.l2_norm_clip:
+        - 0.1
+        - 0.2
+        - 0.5
+        - 1.0
+        - 2.0
+      differential_privacy.noise_multiplier:
+        - 1.2
+        - 1.5
+        - 1.7
+        - 2.0
+      training.local_epochs:
+        - 1
+        - 10
+      training.batch_size:
+        - 10
+        - 30
+        - 60

@@ -1,0 +1,59 @@
+# @package _global_
+
+defaults:
+  - override /model: vae
+  - override /dataset: chexpert
+  - override /evaluation: development
+  - override /differential_privacy: disabled
+  - override /training/vae_loss_fn: kl_loss
+
+experiment_name: vae_centralized_chexpert
+
+model:
+  type: centralized
+  latent_dim: 128
+  module: cxr_vae
+
+dataset:
+  n_clients: 1
+
+training:
+  total_rounds: 100
+  batch_size: 64
+  clients_per_round: 0
+  client_optimizer:
+    type: Adam
+    lr: 0.0002
+  vae_loss_fn:
+    kl_beta: 0.01
+    kl_beta_warmup: 0
+
+evaluation:
+  rounds_per_eval: 10
+
+
+hydra:
+  sweeper:
+    params:
+      training.batch_size:
+        - 16
+        - 64
+      training.client_optimizer.type:
+        - Adam
+        - SGD
+      training.client_optimizer.lr:
+        - 0.0001
+        - 0.0005
+        - 0.001
+        - 0.01
+      evaluation.run_fid_eval:
+        - False
+      training.vae_loss_fn.kl_beta:
+        - 10.0
+        - 1.0
+        - 0.1
+        - 0.01
+      training.vae_loss_fn.kl_beta_warmup:
+        - 0
+        - 50
+

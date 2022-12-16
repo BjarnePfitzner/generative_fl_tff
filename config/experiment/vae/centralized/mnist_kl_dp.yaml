@@ -1,0 +1,61 @@
+# @package _global_
+
+defaults:
+  - override /model: vae
+  - override /dataset: mnist
+  - override /evaluation: development
+  - override /differential_privacy: local
+  - override /training/vae_loss_fn: kl_loss
+  - override /training/early_stopping:
+    - accuracy
+    - fid
+
+experiment_name: centralized_LDP_KL
+
+model:
+  type: centralized
+  latent_dim: 8
+  module: small_ccvae
+
+dataset:
+  n_clients: 1
+
+training:
+  total_rounds: 200
+  clients_per_round: 0
+  batch_size: 32
+  client_optimizer:
+    type: Adam
+    lr: 0.0001
+  vae_loss_fn:
+    kl_beta: 0.01
+    kl_beta_warmup: 0
+differential_privacy:
+  l2_norm_clip: 0.5
+  noise_multiplier: 1.2
+
+evaluation:
+  rounds_per_eval: 10
+  run_fid_eval: True
+  batch_size: 64
+
+
+hydra:
+  sweeper:
+    params:
+      training.batch_size:
+        - 16
+        - 64
+      training.client_optimizer.lr:
+        - 0.001
+        - 0.0001
+      differential_privacy.l2_norm_clip:
+        - 0.5
+        - 0.8
+        - 1.0
+        - 2.0
+      differential_privacy.noise_multiplier:
+        - 0.5
+        - 0.8
+        - 1.0
+        - 1.2

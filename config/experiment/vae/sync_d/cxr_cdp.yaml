@@ -1,0 +1,85 @@
+# @package _global_
+
+defaults:
+  - override /model: vae
+  - override /dataset: cxr
+  - override /evaluation: development
+  - override /differential_privacy: central
+  - override /training/vae_loss_fn: soft_intro_vae_loss
+  - override /training/early_stopping:
+    - fid
+  #  - accuracy
+  #  - loss
+
+experiment_name: vae_sync_d_cxr
+
+training:
+  aggregation_step_optimizer:
+    type: SGD
+    lr: 1.0
+  client_optimizer:
+    type: Adam
+  total_rounds: 200
+  vae_loss_fn:
+    s_intro_beta_rec: 0.2
+    s_intro_beta_kl: 0.5
+    s_intro_beta_neg: 1024.0
+  differential_privacy:
+    adaptive: False
+
+evaluation:
+  run_fid_eval: True
+  plot_l2_norms: True
+  rounds_per_eval: 10
+
+model:
+  type: sync_d
+  module: cxr_vae
+
+hydra:
+  sweeper:
+    params:
+      model.module:
+        - cxr_vae
+        - cxr_vae_sigmoid
+      model.latent_dim:
+        - 16
+        - 32
+        - 128
+      differential_privacy.l2_norm_clip:
+        - 0.1
+        - 1.0
+        - 1.5
+        - 2.0
+        - 5.0
+        - 10.0
+      differential_privacy.noise_multiplier:
+        - 0.5
+        - 0.75
+        - 1.0
+        - 1.25
+        - 1.5
+        - 2.0
+        - 2.5
+      training.batch_size:
+        - 8
+        - 16
+        - 32
+      training.local_epochs:
+        - 1
+        - 5
+        - 10
+      training.clients_per_round:
+        - 0.1
+        - 0.2
+        - 0.5
+        - 1.0
+      training.client_optimizer.lr:
+        - 0.0001
+        - 0.0002
+        - 0.0005
+        - 0.001
+      training.aggregation_step_optimizer.momentum:
+        - 0.0
+        - 0.5
+        - 0.9

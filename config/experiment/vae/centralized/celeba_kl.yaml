@@ -1,0 +1,58 @@
+# @package _global_
+
+defaults:
+  - override /model: vae
+  - override /dataset: celeba
+  - override /evaluation: development
+  - override /differential_privacy: disabled
+  - override /training/vae_loss_fn: kl_loss
+  - override /training/early_stopping:
+      - accuracy
+      - fid
+
+experiment_name: vae_centralized_celeba
+
+training:
+  total_rounds: 100
+  client_optimizer:
+    type: Adam
+    lr: 0.0005
+  vae_loss_fn:
+    kl_beta_warmup: 0
+    kl_beta: 0.01
+  batch_size: 8
+
+evaluation:
+  run_fid_eval: True
+  plot_l2_norms: False
+  rounds_per_eval: 20
+
+model:
+  type: centralized
+  module: dp2_ccvae
+  latent_dim: 8
+  output_activation_fn: sigmoid
+
+
+hydra:
+  sweeper:
+    params:
+      model.latent_dim:
+        - 8
+        - 32
+      model.module:
+        - dp2_ccvae
+        - small_ccvae
+      training.batch_size:
+        - 16
+        - 64
+        - 128
+      training.client_optimizer.lr:
+        - 0.00001
+        - 0.0001
+        - 0.001
+        - 0.01
+      training.vae_loss_fn.kl_beta:
+        - 0.01
+        - 0.1
+        - 1.0

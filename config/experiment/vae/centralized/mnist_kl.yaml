@@ -1,0 +1,64 @@
+# @package _global_
+
+defaults:
+  - override /model: vae
+  - override /dataset: mnist
+  - override /evaluation: development
+  - override /differential_privacy: disabled
+  - override /training/vae_loss_fn: kl_loss
+  - override /training/early_stopping:
+      - accuracy
+      - fid
+
+experiment_name: vae_centralized_mnist
+
+model:
+  type: centralized
+  module: small_ccvae
+  output_activation_fn: sigmoid
+  latent_dim: 8
+
+dataset:
+  n_clients: 1
+
+training:
+  total_rounds: 100
+  clients_per_round: 0
+  client_optimizer:
+    type: Adam
+    lr: 0.001
+  batch_size: 128
+  vae_loss_fn:
+    kl_beta_warmup: 0
+    kl_beta: 0.01
+  early_stopping:
+    accuracy:
+      baseline: 0.5
+      patience: 20
+      initial_delay: 20
+    fid:
+      patience: 20
+      initial_delay: 20
+
+evaluation:
+  rounds_per_eval: 20
+  run_fid_eval: True
+
+
+hydra:
+  sweeper:
+    params:
+      training.client_optimizer.lr:
+        - 0.0001
+        - 0.001
+        - 0.01
+      training.vae_loss_fn.kl_beta:
+        - 0.001
+        - 0.01
+        - 0.1
+        - 1.0
+        - 10.0
+      training.vae_loss_fn.kl_beta_warmup:
+        - 0
+        - 10
+        - 100

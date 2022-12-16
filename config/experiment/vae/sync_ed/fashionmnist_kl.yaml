@@ -1,0 +1,69 @@
+# @package _global_
+
+defaults:
+  - override /model: vae
+  - override /dataset: fashion_mnist
+  - override /evaluation: development
+  - override /differential_privacy: disabled
+  - override /training/vae_loss_fn: kl_loss
+  #- override /training/early_stopping:
+  #    - accuracy
+  #    - fid
+
+experiment_name: FashionMNIST-sync_ed-KL
+
+training:
+  total_rounds: 100
+  aggregation_step_optimizer:
+    type: SGD
+    lr: 1.0
+    momentum: 0.5
+  client_optimizer:
+    type: Adam
+    lr: 0.001
+  clients_per_round: 0.1
+  batch_size: 30
+  local_epochs: 10
+  vae_loss_fn:
+    kl_beta: 0.01
+    kl_beta_warmup: 0
+
+differential_privacy:
+  l2_norm_clip: 1.0
+  noise_multiplier: 1.0
+
+evaluation:
+  run_fid_eval: True
+  plot_l2_norms: True
+  rounds_per_eval: 25
+
+model:
+  type: sync_ed
+  latent_dim: 8
+  module: dp2_ccvae
+  output_activation_fn: sigmoid
+
+
+hydra:
+  sweeper:
+    params:
+      model.module:
+        - small_ccvae
+        - dp2_ccvae
+      training.batch_size:
+        - 10
+        - 30
+      training.client_optimizer.lr:
+        - 0.001
+        - 0.01
+      training.aggregation_step_optimizer.momentum:
+        - 0.0
+        - 0.5
+        - 0.9
+      training.local_epochs:
+        - 1
+      #  - 5
+        - 10
+      training.clients_per_round:
+        - 0.1
+        - 0.2

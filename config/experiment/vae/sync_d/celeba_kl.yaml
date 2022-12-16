@@ -1,0 +1,71 @@
+# @package _global_
+
+defaults:
+  - override /model: vae
+  - override /dataset: celeba
+  - override /evaluation: development
+  - override /differential_privacy: disabled
+  - override /training/vae_loss_fn: kl_loss
+  #- override /training/early_stopping:
+  #  - fid
+  #  - accuracy
+
+experiment_name: CelebA-sync_d-KL
+
+training:
+  local_epochs: 5
+  batch_size: 20
+  clients_per_round: 0.01
+  client_optimizer:
+    type: Adam
+    lr: 0.01
+  aggregation_step_optimizer:
+    type: SGD
+    lr: 1.0
+    momentum: 0.5
+  total_rounds: 100
+  vae_loss_fn:
+    kl_beta: 0.01
+    kl_beta_warmup: 0
+
+evaluation:
+  run_fid_eval: True
+  rounds_per_eval: 25
+  plot_l2_norms: True
+
+model:
+  type: sync_d
+  latent_dim: 16
+  module: small_ccvae
+
+differential_privacy:
+  auto_detect: False
+  adaptive: False
+  l2_norm_clip: 0.1
+  noise_multiplier: 1.2
+
+hydra:
+  sweeper:
+    params:
+      model.module:
+        - dp2_ccvae
+        - small_ccvae
+      training.local_epochs:
+        - 1
+        - 10
+      training.batch_size:
+        - 8
+        - 16
+        - 32
+      training.clients_per_round:
+        - 0.005
+        - 0.01
+        - 0.05
+      training.aggregation_step_optimizer.momentum:
+        - 0.0
+        - 0.5
+        - 0.9
+      training.client_optimizer.lr:
+        - 0.0001
+        - 0.001
+        - 0.01

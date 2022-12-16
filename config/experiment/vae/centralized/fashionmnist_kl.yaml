@@ -1,0 +1,38 @@
+# @package _global_
+
+defaults:
+  - override /model: vae
+  - override /dataset: fashion_mnist
+  - override /evaluation: development
+  - override /differential_privacy: disabled
+  - override /training/vae_loss_fn: kl_loss
+  #- override /training/early_stopping:
+  #    - accuracy
+  #    - fid
+
+experiment_name: FashionMNIST-centralized-KL
+
+training:
+  total_rounds: 100
+  client_optimizer:
+    type: Adam
+    lr: 0.0001
+  batch_size: 128
+  vae_loss_fn:
+    kl_beta: 0.01
+    kl_beta_warmup: 0
+
+differential_privacy:
+  l2_norm_clip: 1.0
+  noise_multiplier: 1.0
+
+evaluation:
+  run_fid_eval: True
+  plot_l2_norms: True
+  rounds_per_eval: 25
+
+model:
+  type: centralized
+  latent_dim: 8
+  module: dp2_ccvae
+  output_activation_fn: sigmoid
