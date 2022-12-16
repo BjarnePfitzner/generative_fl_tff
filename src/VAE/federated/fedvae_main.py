@@ -154,7 +154,7 @@ def run_single_trial(dataset: AbstractDataset, eval_hook_fn, cfg):
             break
 
         # ===== Log current privacy spending and l2_norm_clip/stddev setup =====
-        if cfg.differential_privacy.type == 'global':
+        if cfg.differential_privacy.type == 'central':
             if cfg.differential_privacy.adaptive:
                 sum_state = server_state.aggregation_state[0].numerator_state.sum_state
             else:
@@ -262,7 +262,7 @@ def setup_rdp_accountant(cfg, dataset):
             exit(0)
         return rdp_accountants, max_local_steps
 
-    if cfg.differential_privacy.type == 'global':
+    if cfg.differential_privacy.type == 'central':
         rdp_accountant = RDPAccountant(q=cfg.training.clients_per_round,
                                        z=cfg.differential_privacy.noise_multiplier,
                                        N=cfg.dataset.n_clients,
@@ -325,7 +325,7 @@ def create_vae_fns(vae_model_fn, vae_loss_fn,
                                        local_dp=dp_config.type == 'local')
 
     dp_average_query = None
-    if dp_config.type == 'global':
+    if dp_config.type == 'central':
         dp_average_query = dp_utils.get_dp_query(noise_multiplier=dp_config.noise_multiplier,
                                                  n_clients_per_round=n_clients_per_round,
                                                  l2_norm_clip=dp_config.l2_norm_clip,

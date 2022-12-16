@@ -4,12 +4,12 @@ import tensorflow_privacy as tfp
 
 
 class RDPAccountant:
-    def __init__(self, q, z, N, max_eps, target_delta=1e-5, dp_type='global', rdp_orders=None):
+    def __init__(self, q, z, N, max_eps, target_delta=1e-5, dp_type='central', rdp_orders=None):
         """Calculates the actual standard deviation of noise after minibatch/client averaging
         Args:
-          q: the sampling rate - clients_per_round (for global DP), batch_size / dataset_size (for local DP).
+          q: the sampling rate - clients_per_round (for central DP), batch_size / dataset_size (for local DP).
           z: the noise multiplier.
-          N: the number of clients (for global DP), the size of the dataset (for local DP).
+          N: the number of clients (for central DP), the size of the dataset (for local DP).
         Returns:
           an RDP accountant that provides info about privacy spending
         """
@@ -29,7 +29,7 @@ class RDPAccountant:
         """Calculates the the privacy spending for a given epoch/steps.
         Args:
           n_steps: the number of differentially private steps. Corresponds to
-                        the global epoch (for global DP), the total number of local optimisation steps (for local DP).
+                        the global epoch (for central DP), the total number of local optimisation steps (for local DP).
         Returns:
           an RDP accountant that provides info about privacy spending
         """

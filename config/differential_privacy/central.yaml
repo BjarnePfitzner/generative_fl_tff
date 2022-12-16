@@ -1,4 +1,4 @@
-type: global
+type: central
 l2_norm_clip: 1.2
 noise_multiplier: 0.7
 delta: 1e-5
