@@ -27,7 +27,7 @@ class CelebADataset(AbstractDataset):
         return 0.858    # todo
 
     def get_dataset_size_for_client(self, client_id):
-        assert self.is_federated[0]
+        assert self.is_federated
         return LOCAL_CELEBA_DATASET_SIZES[client_id]
 
     def _load_tf_dataset(self):
@@ -62,19 +62,12 @@ class CelebADataset(AbstractDataset):
             return preprocessed_ds
 
         self.train_ds = celeba_train.preprocess(preprocess_federated_dataset)
-        if self.is_federated[1]:
-            self.test_ds = celeba_test.preprocess(partial(preprocess_federated_dataset,
-                                                           cache=(not self.dataset_cfg.use_val_data)))
-            if self.dataset_cfg.use_val_data:
-                self.val_ds = self.test_ds.preprocess(lambda ds: ds.shard(num_shards=2, index=0).cache())
-                self.test_ds = self.test_ds.preprocess(lambda ds: ds.shard(num_shards=2, index=0).cache())
-        else:
-            self.test_ds = preprocess_centralized_dataset(celeba_test.create_tf_dataset_from_all_clients(),
-                                                          total_dataset_size=self.dataset_size['test'],
-                                                          cache=(not self.dataset_cfg.use_val_data))
-            if self.dataset_cfg.use_val_data:
-                self.val_ds = self.test_ds.shard(num_shards=2, index=0).cache()
-                self.test_ds = self.test_ds.shard(num_shards=2, index=1).cache()
+        self.test_ds = preprocess_centralized_dataset(celeba_test.create_tf_dataset_from_all_clients(),
+                                                      total_dataset_size=self.dataset_size['test'],
+                                                      cache=(not self.dataset_cfg.use_val_data))
+        if self.dataset_cfg.use_val_data:
+            self.val_ds = self.test_ds.shard(num_shards=2, index=0).cache()
+            self.test_ds = self.test_ds.shard(num_shards=2, index=1).cache()
 
 
 LOCAL_CELEBA_DATASET_SIZES = {

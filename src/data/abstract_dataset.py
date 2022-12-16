@@ -42,7 +42,7 @@ class AbstractDataset(ABC):
         self.val_ds = None
         self.is_preprocessed = False
 
-        if is_federated[0]:
+        if is_federated:
             logging.info(f'Loading {self.name} TFF dataset...')
             self._load_tff_dataset()
             self.client_ids = copy(self.train_ds.client_ids)
@@ -79,7 +79,7 @@ class AbstractDataset(ABC):
         pass
 
     def get_dataset_size_for_client(self, client_id):
-        assert self.is_federated[0]
+        assert self.is_federated
         return self.local_dataset_sizes[0]
 
     @abstractmethod
@@ -91,31 +91,22 @@ class AbstractDataset(ABC):
 
         if self.dataset_cfg.class_distribution == 'iid':
             self.train_ds = self._create_federated_dataset(self.train_ds, self.dataset_cfg.n_clients)
-            if self.is_federated[1]:
-                self.test_ds = self._create_federated_dataset(self.test_ds, self.dataset_cfg.n_clients)
-                if self.use_val_data:
-                    self.val_ds = self._create_federated_dataset(self.val_ds, self.dataset_cfg.n_clients)
         elif self.dataset_cfg.class_distribution.endswith('-class-nonIID'):
             self.train_ds = self._prepare_non_iid_data(self.train_ds)
         else:
             raise NotImplementedError('Only iid distribution implemented so far')
 
     def preprocess_datasets(self, train_batch_size, test_batch_size, local_epochs, local_dp=False):
-        if self.is_federated[0]:
+        if self.is_federated:
             if local_dp:
                 self._remove_clients_with_too_little_data(train_batch_size)
             self.train_ds = self._preprocess_tff_dataset(self.train_ds, train_batch_size, local_epochs, drop_remainder=local_dp)
         else:
             self.train_ds = self._preprocess_tf_dataset(self.train_ds, train_batch_size, drop_remainder=local_dp)
 
-        if self.is_federated[1]:
-            self.test_ds = self._preprocess_tff_dataset(self.test_ds, test_batch_size, 1, drop_remainder=local_dp)
-            if self.dataset_cfg.use_val_data:
-                self.val_ds = self._preprocess_tff_dataset(self.val_ds, test_batch_size, 1, drop_remainder=local_dp)
-        else:
-            self.test_ds = self._preprocess_tf_dataset(self.test_ds, test_batch_size, drop_remainder=local_dp)
-            if self.dataset_cfg.use_val_data:
-                self.val_ds = self._preprocess_tf_dataset(self.val_ds, test_batch_size, drop_remainder=local_dp)
+        self.test_ds = self._preprocess_tf_dataset(self.test_ds, test_batch_size, drop_remainder=local_dp)
+        if self.dataset_cfg.use_val_data:
+            self.val_ds = self._preprocess_tf_dataset(self.val_ds, test_batch_size, drop_remainder=local_dp)
 
         self.is_preprocessed = True
 
@@ -202,23 +193,18 @@ class AbstractDataset(ABC):
             self.client_ids = new_client_ids
             self.dataset_cfg.n_clients = len(new_client_ids)
 
-    def log_sample_data(self, run_dir):
+    def log_sample_data(self):
         if self.is_preprocessed:
             logging.info('Not logging sample data since data has been preprocessed already.')
             return
 
         logging.info('Logging sample data')
-        if self.is_federated[1]:
-            sample_data = np.array(list(map(lambda x: x[0],
-                                            self.test_ds.create_tf_dataset_for_client(self.test_ds.client_ids[0])
-                                            .take(16).as_numpy_iterator())))
-        else:
-            sample_data = np.array(list(map(lambda x: x[0], self.test_ds.take(16).as_numpy_iterator())))
+        sample_data = np.array(list(map(lambda x: x[0], self.test_ds.take(16).as_numpy_iterator())))
         plot_grid_image(images=sample_data,
                         image_size=self.dataset_cfg.data_dim,
-                        file_name=f'{run_dir}/images/sample_images.png')
+                        file_name='images/sample_images.png')
 
     def print_dataset_sizes(self):
         logging.info(f'Dataset sizes: {self.dataset_size}')
-        if self.is_federated[0]:
+        if self.is_federated:
             logging.info(f'Local train sizes: {round(self.local_dataset_sizes[0], 2)} +/- {round(self.local_dataset_sizes[1], 2)}')

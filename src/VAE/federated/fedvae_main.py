@@ -56,8 +56,8 @@ def run_single_trial(dataset: AbstractDataset, eval_hook_fn, cfg):
     initial_server_state = iterative_process.initialize()
 
     # Prepare callback fns
-    get_initial_state, write_model_checkpoint = get_write_model_checkpoint_fn(cfg.run_dir, disable_checkpointing=(
-                cfg.model.type == 'sync_d'))
+    get_initial_state, write_model_checkpoint = get_write_model_checkpoint_fn(
+        disable_checkpointing=(cfg.model.type == 'sync_d'))
 
     # get initial state, possibly from disk
     server_state, client_states, start_round = get_initial_state(initial_server_state, initial_client_states)
@@ -66,9 +66,9 @@ def run_single_trial(dataset: AbstractDataset, eval_hook_fn, cfg):
     eval_model = vae.model_fn()
 
     # setup metrics dataframe
-    if os.path.exists(f'{cfg.run_dir}/metrics.csv'):
+    if os.path.exists('metrics.csv'):
         # resuming a run
-        metrics = pd.read_csv(f'{cfg.run_dir}/metrics.csv', index_col='global_round')
+        metrics = pd.read_csv('metrics.csv', index_col='global_round')
     else:
         metrics = pd.DataFrame(columns=get_metrics_list(cfg))
 
@@ -85,7 +85,7 @@ def run_single_trial(dataset: AbstractDataset, eval_hook_fn, cfg):
                                     round_num,
                                     partial(_vae_specific_eval_fn,
                                             cfg.model.latent_dim, cfg.dataset.n_classes, cfg.dataset.data_dim,
-                                            f'{cfg.run_dir}/images/round_{round_num}-latent_space'))
+                                            f'images/round_{round_num}-latent_space'))
         progress.add_eval_duration(time.time() - eval_start_time)
         return eval_metrics
 
@@ -219,10 +219,10 @@ def run_single_trial(dataset: AbstractDataset, eval_hook_fn, cfg):
             break
 
         # Save metrics DF
-        metrics.to_csv(f'{cfg.run_dir}/metrics.csv', index_label='global_round')
+        metrics.to_csv('metrics.csv', index_label='global_round')
 
     # Save metrics DF again (in case we hit a "break")
-    metrics.to_csv(f'{cfg.run_dir}/metrics.csv', index_label='global_round')
+    metrics.to_csv('metrics.csv', index_label='global_round')
 
     final_model = vae.model_fn()
     impl_module.set_eval_model_weights(final_model, server_state.model_weights)
@@ -350,6 +350,6 @@ def create_vae_fns(vae_model_fn, vae_loss_fn,
 
 def _vae_specific_eval_fn(latent_dim, n_classes, data_dim, base_file_name, model):
     if latent_dim == 2:
-        os.makedirs(base_file_name)
+        os.makedirs(base_file_name, exist_ok=True)
         for i in range(n_classes):
             plot_2d_latent_space(model, i, data_dim, file_name=f'{base_file_name}/label_{i}.png')

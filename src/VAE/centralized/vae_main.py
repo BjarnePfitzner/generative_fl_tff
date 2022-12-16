@@ -49,9 +49,9 @@ def run_single_trial(dataset: AbstractDataset, eval_hook_fn, cfg):
                                                    local_dp=cfg.differential_privacy.type != 'disabled'))
 
     # setup metrics dataframe
-    if os.path.exists(f'{cfg.run_dir}/metrics.csv'):
+    if os.path.exists('metrics.csv'):
         # resuming a run
-        metrics = pd.read_csv(f'{cfg.run_dir}/metrics.csv', index_col='global_round')
+        metrics = pd.read_csv('metrics.csv', index_col='global_round')
     else:
         metrics = pd.DataFrame(columns=get_metrics_list(cfg))
 
@@ -131,10 +131,10 @@ def run_single_trial(dataset: AbstractDataset, eval_hook_fn, cfg):
             break
 
         # Save metrics DF
-        metrics.to_csv(f'{cfg.run_dir}/metrics.csv', index_label='global_round')
+        metrics.to_csv('metrics.csv', index_label='global_round')
 
     # Save metrics DF again (in case we hit a "break")
-    metrics.to_csv(f'{cfg.run_dir}/metrics.csv', index_label='global_round')
+    metrics.to_csv('metrics.csv', index_label='global_round')
 
     return metrics, model.decoder
 

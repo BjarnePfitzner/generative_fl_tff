@@ -26,5 +26,5 @@ def get_dataset_instance(cfg) -> AbstractDataset:
     dataset = dataset_class(cfg.dataset, cfg.model.normalisation_mean_zero, is_federated)
 
     if cfg.log_sample_data:
-        dataset.log_sample_data(cfg.run_dir)
+        dataset.log_sample_data()
     return dataset

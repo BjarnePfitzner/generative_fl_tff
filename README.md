@@ -10,3 +10,6 @@ Please run ```pip install -r requirements.txt```
 We use hydra experiment configuration. 
 The config files can be found in the ```./config``` directory. 
 They are split thematically and define the experiment structure 
+
+# Notes
+- Hydra mutliruns (```python main.py -m ...```) don't work without defining more sophisticated launchers (such as ```hydra-submitit```). The issue is that ```@tf.function``` decorated functions are already instantiated for the 2nd and further runs which throws an exception.

@@ -40,7 +40,7 @@ def get_eval_hook_fn(dataset: AbstractDataset,
     def get_image(image, _):
         return image
 
-    if dataset.is_federated[0]:
+    if dataset.is_federated:
         central_train_dataset = (dataset.train_ds.create_tf_dataset_from_all_clients()
                                  .shuffle(buffer_size=1000, reshuffle_each_iteration=False)
                                  .cache()
@@ -109,7 +109,7 @@ def get_eval_hook_fn(dataset: AbstractDataset,
         predictions = generator(seed, training=False)
         tf.debugging.assert_all_finite(predictions, 'sample images include NaN or Inf')
         plot_grid_image(images=predictions, image_size=cfg.dataset.data_dim,
-                        file_name=f'{cfg.run_dir}/images/round_{epoch_num}-synthetic_images.png')
+                        file_name=f'images/round_{epoch_num}-synthetic_images.png')
 
         # Potentially run additional eval fn
         if additional_eval_fn is not None:
@@ -186,7 +186,7 @@ def get_eval_hook_fn(dataset: AbstractDataset,
     def run_cm_eval(generated_dataset, cls_weights, epoch_num):
         classification_model.set_weights(cls_weights)
         return confusion_matrix.get_cm_image(generated_dataset, classification_model, dataset.class_labels,
-                                             file_name=f'{cfg.run_dir}/images/round_{epoch_num}-conf_mat.png')
+                                             file_name=f'images/round_{epoch_num}-conf_mat.png')
 
     def reset_classification_model():
         classification_model.set_weights(initial_cls_model_weights)

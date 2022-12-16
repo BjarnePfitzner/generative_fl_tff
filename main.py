@@ -21,18 +21,16 @@ def main(cfg: DictConfig):
     logging.info('==================== SETUP PHASE ====================')
 
     # ========== Setup run directory =========
-    if os.path.exists(cfg.run_dir):
+    if os.path.exists('hydra_config.yaml'):
         if cfg.resume_runs:
             logging.info('Resumung run')
             logging.info('loading config file...')
-            with open(f'{cfg.run_dir}/hydra_config.yaml', 'r') as f:
+            with open('hydra_config.yaml', 'r') as f:
                 cfg = OmegaConf.load(f)
         else:
             logging.info('Run directory not empty. Exiting...')
             exit(0)
-    else:
-        os.makedirs(cfg.run_dir, exist_ok=True)
-    os.makedirs(f'{cfg.run_dir}/images', exist_ok=True)
+    os.makedirs('images', exist_ok=True)
 
     # ========== Load dataset ==========
     dataset = get_dataset_instance(cfg)
@@ -75,7 +73,7 @@ def main(cfg: DictConfig):
     # ========== Save config file ==========
     yaml = OmegaConf.to_yaml(cfg)
     logging.info(yaml)
-    with open(f'{cfg.run_dir}/hydra_config.yaml', 'w') as f:
+    with open('hydra_config.yaml', 'w') as f:
         f.write(yaml)
 
     # ========================================
@@ -92,10 +90,10 @@ def main(cfg: DictConfig):
     try:
         metrics, generator_model = main_module.run_single_trial(dataset, eval_hook_fn, cfg)
         if cfg.save_generator:
-            results_dir = f'{cfg.run_dir}/final_model/'
+            results_dir = 'final_model/'
             os.makedirs(results_dir, exist_ok=True)
             generator_model.save_weights(f'{results_dir}/gen_model')
-            logging.info(f'Saved model to {results_dir}')
+            logging.info(f'Saved model to {os.path.abspath(results_dir)}')
     except Exception as e:
         logging.exception(e)
         return 1e10

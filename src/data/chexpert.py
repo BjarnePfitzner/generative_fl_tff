@@ -45,7 +45,7 @@ class CheXpertDataset(AbstractDataset):
         return 0.342
 
     def get_dataset_size_for_client(self, client_id):
-        assert self.is_federated[0]
+        assert self.is_federated
         return 1406
 
     def _load_tf_dataset(self):

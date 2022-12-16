@@ -26,7 +26,7 @@ class CIFAR100Dataset(AbstractDataset):
         return 0.553
 
     def get_dataset_size_for_client(self, client_id):
-        assert self.is_federated[0]
+        assert self.is_federated
         pass    # todo
 
     def _load_tf_dataset(self):
@@ -62,17 +62,9 @@ class CIFAR100Dataset(AbstractDataset):
 
         self.train_ds = cifar_train.preprocess(partial(preprocess_federated_dataset,
                                                        total_dataset_size=self.dataset_size['train']))
-        if self.is_federated[1]:
-            self.test_ds = cifar_test.preprocess(partial(preprocess_federated_dataset,
-                                                         total_dataset_size=self.dataset_size['test'],
-                                                         cache=(not self.dataset_cfg.use_val_data)))
-            if self.dataset_cfg.use_val_data:
-                self.val_ds = self.test_ds.preprocess(lambda ds: ds.shard(num_shards=2, index=0).cache())
-                self.test_ds = self.test_ds.preprocess(lambda ds: ds.shard(num_shards=2, index=0).cache())
-        else:
-            self.test_ds = preprocess_centralized_dataset(cifar_test.create_tf_dataset_from_all_clients(),
-                                                          total_dataset_size=self.dataset_size['test'],
-                                                          cache=(not self.dataset_cfg.use_val_data))
-            if self.dataset_cfg.use_val_data:
-                self.val_ds = self.test_ds.shard(num_shards=2, index=0).cache()
-                self.test_ds = self.test_ds.shard(num_shards=2, index=1).cache()
+        self.test_ds = preprocess_centralized_dataset(cifar_test.create_tf_dataset_from_all_clients(),
+                                                      total_dataset_size=self.dataset_size['test'],
+                                                      cache=(not self.dataset_cfg.use_val_data))
+        if self.dataset_cfg.use_val_data:
+            self.val_ds = self.test_ds.shard(num_shards=2, index=0).cache()
+            self.test_ds = self.test_ds.shard(num_shards=2, index=1).cache()

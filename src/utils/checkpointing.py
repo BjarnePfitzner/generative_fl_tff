@@ -11,13 +11,12 @@ class TrainingState(object):
     client_states = attr.ib()
 
 
-def get_write_model_checkpoint_fn(run_dir, disable_checkpointing=False):
+def get_write_model_checkpoint_fn(disable_checkpointing=False):
     if disable_checkpointing:
         # This ugliness is necessary to bypass error described in comment below
         return (lambda ss, cs: (ss, cs, 1)), (lambda *args: None)
 
-    checkpoint_dir = os.path.join(run_dir, "checkpoints")
-    checkpoint_manager = FileCheckpointManager(checkpoint_dir)
+    checkpoint_manager = FileCheckpointManager("checkpoints")
 
     def get_initial_state(initial_server_state, initial_client_states):
         initial_state = TrainingState(initial_server_state, initial_client_states)

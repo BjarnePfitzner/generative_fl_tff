@@ -1,0 +1,20 @@
+experiment_name: ???
+run_dir: ???
+save_generator: True
+log_sample_data: False
+adjust_total_rounds: False
+resume_runs: True
+
+defaults:
+  - model: vae
+  - dataset: mnist
+  - training: ${model}_default
+  - differential_privacy: disabled
+  - evaluation: development
+  - override hydra/job_logging: disabled
+
+
+hydra:
+  output_subdir: null
+  run:
+    dir: runs/${run_dir}
