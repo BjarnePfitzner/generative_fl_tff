@@ -41,30 +41,3 @@ model:
   type: sync_ed
   module: soft_intro_res_vae
   latent_dim: 128
-
-
-hydra:
-  sweeper:
-    params:
-      model.module:
-        - soft_intro_res_vae
-        - cxr_vae
-      differential_privacy.l2_norm_clip:
-        - 0.1
-        - 0.5
-        - 1.0
-        - 1.5
-        - 2.0
-        - 10.0
-        - 1000.0
-      training.local_epochs:
-        - 1
-        - 10
-      training.client_optimizer.lr:
-        - 0.00005
-        - 0.0001
-        - 0.001
-      training.batch_size:
-        - 8
-        - 32
-        - 128

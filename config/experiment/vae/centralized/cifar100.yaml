@@ -28,34 +28,3 @@ training:
     s_intro_beta_rec: 0.5
     s_intro_beta_kl: 0.2
     s_intro_beta_neg: 512.0
-
-hydra:
-  sweeper:
-    params:
-      model.latent_dim:
-        - 128
-        - 256
-        - 512
-      training.vae_loss_fn.s_intro_beta_rec:
-        - 0.1
-        - 0.2
-        - 0.5
-        - 1.0
-      training.vae_loss_fn.s_intro_beta_kl:
-        - 0.1
-        - 0.2
-        - 0.5
-        - 1.0
-      training.vae_loss_fn.s_intro_beta_neg:
-        - 128.0
-        - 256.0
-        - 512.0
-        - 1024.0
-      evaluation.run_fid_eval:
-        - True
-      evaluation.run_cls_eval:
-        - True
-      evaluation.rounds_per_eval:
-        - 25
-      training.total_rounds:
-        - 200

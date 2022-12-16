@@ -38,24 +38,3 @@ evaluation:
   rounds_per_eval: 10
   run_fid_eval: True
   batch_size: 64
-
-
-hydra:
-  sweeper:
-    params:
-      training.batch_size:
-        - 16
-        - 64
-      training.client_optimizer.lr:
-        - 0.001
-        - 0.0001
-      differential_privacy.l2_norm_clip:
-        - 0.5
-        - 0.8
-        - 1.0
-        - 2.0
-      differential_privacy.noise_multiplier:
-        - 0.5
-        - 0.8
-        - 1.0
-        - 1.2

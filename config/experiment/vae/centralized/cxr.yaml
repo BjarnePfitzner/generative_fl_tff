@@ -35,35 +35,3 @@ training:
 evaluation:
   rounds_per_eval: 10
   run_fid_eval: True
-
-hydra:
-  sweeper:
-    params:
-      training.batch_size:
-        - 8
-        - 16
-        - 32
-        - 64
-      training.client_optimizer.type:
-        - 'Adam'
-      #  - 'SGD'
-      training.client_optimizer.lr:
-        - 0.00005
-        - 0.0001
-        - 0.0002
-        - 0.0005
-      training.vae_loss_fn.s_intro_beta_rec:
-        - 0.1
-        - 0.2
-        - 0.5
-        - 1.0
-      training.vae_loss_fn.s_intro_beta_kl:
-        - 0.1
-        - 0.2
-        - 0.5
-        - 1.0
-      training.vae_loss_fn.s_intro_beta_neg:
-        - 128
-        - 256
-        - 512
-        - 1024

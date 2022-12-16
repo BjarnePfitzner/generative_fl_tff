@@ -42,36 +42,3 @@ model:
   latent_dim: 8
   module: small_ccvae
   output_activation_fn: sigmoid
-
-
-hydra:
-  sweeper:
-    params:
-      training.vae_loss_fn.kl_beta:
-        - 0.01
-        - 0.1
-        - 1.0
-      training.aggregation_step_optimizer.momentum:
-        - 0.0
-        - 0.5
-        - 0.9
-      training.clients_per_round:
-        - 0.01
-        - 0.05
-        - 0.1
-      #  - 0.2
-      differential_privacy.l2_norm_clip:
-      #  - 0.2
-        - 0.5
-        - 0.75
-        - 1.0
-        - 1.5
-        - 2.0
-      differential_privacy.noise_multiplier:
-        - 0.5
-      #  - 0.6
-        - 0.8
-        - 1.0
-        - 1.2
-        - 1.5
-        - 2.0

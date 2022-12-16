@@ -45,24 +45,3 @@ differential_privacy:
   l2_norm_clip: 2.0
   noise_multiplier: 1.0
 
-hydra:
-  sweeper:
-    params:
-      differential_privacy.l2_norm_clip:
-        - 0.1
-        - 0.2
-        - 0.5
-        - 1.0
-        - 2.0
-      differential_privacy.noise_multiplier:
-        - 1.2
-        - 1.5
-        - 1.7
-        - 2.0
-      training.local_epochs:
-        - 1
-        - 10
-      training.batch_size:
-        - 10
-        - 30
-        - 60

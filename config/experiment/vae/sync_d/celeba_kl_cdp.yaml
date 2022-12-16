@@ -43,33 +43,3 @@ differential_privacy:
   adaptive: False
   l2_norm_clip: 0.5
   noise_multiplier: 1.0
-
-hydra:
-  sweeper:
-    params:
-      model.module:
-        - small_ccvae
-        - dp2_ccvae
-      training.local_epochs:
-        - 1
-        - 10
-      differential_privacy.l2_norm_clip:
-        - 0.5
-        - 1.0
-        - 1.5
-        - 2.0
-        - 5.0
-      differential_privacy.noise_multiplier:
-        - 0.5
-        - 0.7
-      training.clients_per_round:
-        - 0.01
-        - 0.02
-        - 0.05
-      training.aggregation_step_optimizer.momentum:
-        - 0.0
-        - 0.5
-        - 0.9
-      training.client_optimizer.lr:
-        - 0.01
-        - 0.001

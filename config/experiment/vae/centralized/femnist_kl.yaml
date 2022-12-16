@@ -27,35 +27,3 @@ training:
   client_optimizer:
     type: Adam
     lr: 0.001
-
-
-hydra:
-  sweeper:
-    params:
-      model.latent_dim:
-        - 2
-        - 6
-        - 32
-      model.module:
-        - small_ccvae
-        - femnist_vae
-      model.output_activation_fn:
-        - sigmoid
-      training.batch_size:
-        - 32
-        - 64
-        - 128
-      training.client_optimizer.type:
-        - Adam
-      training.client_optimizer.lr:
-        - 0.0001
-        - 0.0005
-        - 0.001
-        - 0.01
-      training.vae_loss_fn.kl_beta:
-        - 0.001
-        - 0.01
-        - 0.1
-        - 1.0
-      training.vae_loss_fn.kl_beta_warmup:
-        - 0

@@ -43,22 +43,3 @@ training:
 evaluation:
   rounds_per_eval: 20
   run_fid_eval: True
-
-
-hydra:
-  sweeper:
-    params:
-      training.client_optimizer.lr:
-        - 0.0001
-        - 0.001
-        - 0.01
-      training.vae_loss_fn.kl_beta:
-        - 0.001
-        - 0.01
-        - 0.1
-        - 1.0
-        - 10.0
-      training.vae_loss_fn.kl_beta_warmup:
-        - 0
-        - 10
-        - 100
